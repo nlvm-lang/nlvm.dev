@@ -104,7 +104,7 @@
      prefix. For text that doesn't spell out the full path (e.g. a bare
      "TcpStream"), set data-id="systemnettcpstream" explicitly. */
 
-  var STDLIB_BASE_URL = "https://nlvm-lang.github.io/nlvm-specs/#/docs/stdlib?id=";
+  var STDLIB_BASE_URL = "https://specs.nlvm.dev/#/docs/stdlib?id=";
   var STDLIB_CLASS_PREFIX = /^([a-z][a-zA-Z0-9]*\.)*[A-Z][a-zA-Z0-9]*/;
 
   function stdlibAnchorId(text) {
