@@ -30,7 +30,7 @@
 
   <p class="kicker">Tour</p>
   <h2 class="section-title">The language, by example</h2>
-  <p class="section-sub">Ten short programs, from hello-world to a real release script. Every snippet on this page is adapted from the <a href="https://github.com/nlvm-lang/nlvm/tree/main/tests">conformance suite</a> — it compiles and runs today.</p>
+  <p class="section-sub">Thirteen short programs, from hello-world to a real release script. Every snippet on this page is adapted from the <a href="https://github.com/nlvm-lang/nlvm/tree/main/tests">conformance suite</a> — it compiles and runs today.</p>
 
   <div class="example reveal">
     <h3><span class="num">01</span>Hello, world</h3>
@@ -221,7 +221,48 @@ Utils.swap(ref x, ref y);  // x == 20, y == 10</code></pre>
   </div>
 
   <div class="example reveal">
-    <h3><span class="num">11</span>A real program: the release script</h3>
+    <h3><span class="num">11</span>Template classes</h3>
+    <p class="desc">Classes can be generic over one or more type parameters with <code>template &lt;type T&gt;</code>. Each instantiation — <code>Box&lt;int&gt;</code>, <code>Box&lt;float&gt;</code> — is monomorphized to its own concrete type at compile time; there's no boxing or erasure.</p>
+    <pre class="nl"><code>template &lt;type T&gt;
+class Box {
+    private T value;
+
+    public construct(T value) { this.value = value; }
+    public T get() { return this.value; }
+    public void set(T value) { this.value = value; }
+}
+
+Box&lt;int&gt; a = new Box&lt;int&gt;(10);
+Box&lt;float&gt; b = new Box&lt;float&gt;(3.5);
+a.set(20);
+system.Out.println(system.Int.toString(a.get()));   // 20
+system.Out.println(system.Float.toString(b.get())); // 3.5</code></pre>
+  </div>
+
+  <div class="example reveal">
+    <h3><span class="num">12</span>Readonly classes and properties</h3>
+    <p class="desc"><code>readonly</code> enforces immutability at the class level or the property level. A readonly field can only be assigned inside the constructor — any later assignment, even from the class's own methods, is a compile error (E013 for a readonly class, E014 for a readonly property).</p>
+    <pre class="nl"><code>class readonly Money {
+    public int cents;
+    public construct(int cents) { this.cents = cents; }
+}
+
+class Point {
+    public readonly int x;
+    public int y;
+    public construct(int x, int y) { this.x = x; this.y = y; }
+}
+
+auto price = new Money(1999);
+// price.cents = 0;   // compile error E013
+
+auto p = new Point(1, 2);
+p.y = 5;               // OK — y isn't readonly
+// p.x = 5;            // compile error E014</code></pre>
+  </div>
+
+  <div class="example reveal">
+    <h3><span class="num">13</span>A real program: the release script</h3>
     <p class="desc">This is not a toy — it's <a href="https://github.com/nlvm-lang/nlvm/blob/main/tools/Release.nl"><code>tools/Release.nl</code></a>, the script that actually tags and pushes every nlvm release. Files, regular expressions and subprocesses from the standard library, checked IO errors, null-checked regex results.</p>
     <pre class="nl"><code>namespace tools;
 
