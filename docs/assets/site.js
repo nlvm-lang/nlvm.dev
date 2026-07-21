@@ -57,7 +57,7 @@
   function highlightSh(src) {
     return src.split("\n").map(function (line) {
       if (/^\$\s/.test(line)) {
-        return '<span class="prompt">$</span> ' + escapeHtml(line.slice(2));
+        return '<span class="prompt">$ </span>' + escapeHtml(line.slice(2));
       }
       if (/^#/.test(line)) {
         return '<span class="tok-com">' + escapeHtml(line) + "</span>";

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Get started — NL &amp; nlvm</title>
-<meta name="description" content="Build the NL toolchain from source, compile your first program to a single .nlp file, and run it on the nlvm virtual machine.">
+<meta name="description" content="Install the NL toolchain with one command (or build it from source), compile your first program to a single .nlp file, and run it on the nlvm virtual machine.">
 <link rel="stylesheet" href="assets/style.css">
 <meta property="og:image" content="https://nlvm.dev/assets/brand/social-preview.png">
 <meta name="twitter:card" content="summary_large_image">
@@ -29,15 +29,20 @@
 <main class="prose">
 
   <h1>Get started</h1>
-  <p class="lede">From a clean machine to a running NL program in about a minute (plus one Rust build). The toolchain is three binaries: <code>nlc</code> the compiler, <code>nlvm</code> the virtual machine, and <code>nltest</code> the conformance test runner.</p>
+  <p class="lede">From a clean machine to a running NL program in about a minute. The toolchain is three binaries: <code>nlc</code> the compiler, <code>nlvm</code> the virtual machine, and <code>nltest</code> the conformance test runner.</p>
 
-  <h2>1. Build from source</h2>
-  <p>You need a <a href="https://rustup.rs">Rust toolchain</a>. Then:</p>
+  <h2>1. Install nlvm</h2>
+  <p>The fastest way, for most people — installs prebuilt <code>nlc</code> and <code>nlvm</code> binaries, no Rust toolchain required:</p>
+  <pre class="sh"><code>$ curl -fsSL https://nlvm.dev/install.sh | bash</code></pre>
+  <p>Prebuilt binaries are published for Linux (x86_64) and macOS (Apple Silicon). It installs into <code>~/.local/bin</code> — make sure that's on your <code>$PATH</code>.</p>
+
+  <h3>Building from source</h3>
+  <p>On another platform, or want to build it yourself? You need a <a href="https://rustup.rs">Rust toolchain</a>. Then:</p>
   <pre class="sh"><code>$ git clone https://github.com/nlvm-lang/nlvm.git
 $ cd nlvm
-$ cargo build -r</code></pre>
-  <p>On Linux, the install script symlinks the binaries into <code>~/.local/bin</code> (make sure it's on your <code>$PATH</code>):</p>
-  <pre class="sh"><code>$ ./install.sh</code></pre>
+$ cargo build -r
+$ ./install.sh</code></pre>
+  <p>Run from inside the cloned repo, <code>install.sh</code> detects the source checkout and symlinks the binaries it just built into <code>~/.local/bin</code> instead of downloading one.</p>
 
   <h2>2. Write a program</h2>
   <p>Create <code>Main.nl</code>:</p>

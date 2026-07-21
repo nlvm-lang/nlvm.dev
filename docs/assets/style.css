@@ -192,6 +192,21 @@ a:hover { color: var(--primary-bright); }
   flex-wrap: wrap;
 }
 
+.quick-install { margin-top: 22px; max-width: 480px; }
+
+.quick-install-label {
+  display: block;
+  margin-bottom: 8px;
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.quick-install pre { margin: 0; padding-right: 46px; }
+.quick-install pre .copy-btn { opacity: 1; }
+
 @media (max-width: 920px) {
   .hero { padding: 56px 0 56px; text-align: center; }
   .hero::before { left: 50%; transform: translateX(-50%); }
@@ -199,6 +214,7 @@ a:hover { color: var(--primary-bright); }
   .hero-brand { justify-content: center; }
   .hero .tagline { margin-left: auto; margin-right: auto; }
   .hero .cta-row { justify-content: center; }
+  .quick-install { margin-left: auto; margin-right: auto; }
 }
 
 .btn {
