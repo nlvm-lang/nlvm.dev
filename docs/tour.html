@@ -30,7 +30,7 @@
 
   <p class="kicker">Tour</p>
   <h2 class="section-title">The language, by example</h2>
-  <p class="section-sub">Thirteen short programs, from hello-world to a real release script. Every snippet on this page is adapted from the <a href="https://github.com/nlvm-lang/nlvm/tree/main/tests">conformance suite</a> — it compiles and runs today.</p>
+  <p class="section-sub">Fourteen short programs, from hello-world to a real release script. Every snippet on this page is adapted from the <a href="https://github.com/nlvm-lang/nlvm/tree/main/tests">conformance suite</a> — it compiles and runs today.</p>
 
   <div class="example reveal">
     <h3><span class="num">01</span>Hello, world</h3>
@@ -262,7 +262,29 @@ p.y = 5;               // OK — y isn't readonly
   </div>
 
   <div class="example reveal">
-    <h3><span class="num">13</span>A real program: the release script</h3>
+    <h3><span class="num">13</span>Nodiscard methods</h3>
+    <p class="desc"><code>nodiscard</code> marks a method whose return value must not be silently dropped. Calling it as a bare statement doesn't fail the build — the compiler reports warning <code>W001</code> and keeps compiling.</p>
+    <pre class="nl"><code>class Result {
+    private bool ok;
+    public construct(bool ok) { this.ok = ok; }
+    public bool isSuccess() { return this.ok; }
+}
+
+class FileHandler {
+    public nodiscard Result openFile(string filename) {
+        return new Result(true);
+    }
+}
+
+auto handler = new FileHandler();
+auto result = handler.openFile("data.txt");
+if (result.isSuccess()) { system.Out.println("opened"); }
+
+handler.openFile("data.txt"); // Warning W001 — return value is discarded</code></pre>
+  </div>
+
+  <div class="example reveal">
+    <h3><span class="num">14</span>A real program: the release script</h3>
     <p class="desc">This is not a toy — it's <a href="https://github.com/nlvm-lang/nlvm/blob/main/tools/Release.nl"><code>tools/Release.nl</code></a>, the script that actually tags and pushes every nlvm release. Files, regular expressions and subprocesses from the standard library, checked IO errors, null-checked regex results.</p>
     <pre class="nl"><code>namespace tools;
 

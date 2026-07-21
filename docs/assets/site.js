@@ -189,7 +189,7 @@
         { cmd: "nlc --version" },
         { out: [["out", "nlc 0.5.6 (nlvm-specs 0.8.44)"]] },
         { cmd: "nltest tests/" },
-        { out: [["ok", "140 passed, 0 failed, 140 total"]] }
+        { out: [["ok", "144 passed, 0 failed, 144 total"]] }
       ]
     }
   ];

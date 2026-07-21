@@ -46,7 +46,7 @@
   <p>The load-bearing choice is <code>nl-bytecode</code>: one crate owns the module format, the opcodes and the type descriptors, and both the compiler and the VM depend on it. There is no way for the two halves to disagree about what the bytecode means.</p>
 
   <h2>Tests as the steering wheel</h2>
-  <p>The specification ships its own conformance tests — YAML files with NL sources, an expected stdout and an expected exit code. The test runner was built in phase 1, before most of the language existed, so from the first week every feature landed the same way: pick the spec tests it should unlock, write local tests for the corners, make them green, move on. The local suite now counts 140 files, one per feature.</p>
+  <p>The specification ships its own conformance tests — YAML files with NL sources, an expected stdout and an expected exit code. The test runner was built in phase 1, before most of the language existed, so from the first week every feature landed the same way: pick the spec tests it should unlock, write local tests for the corners, make them green, move on. The local suite now counts 144 files, one per feature.</p>
 
   <h2>Phase by phase</h2>
   <ul>
