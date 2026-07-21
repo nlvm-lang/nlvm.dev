@@ -1,1 +1,8 @@
+.vscode/
+.idea/
+.cursor/
+.claude/
+
 .venv/
+
+src/Build.nlp

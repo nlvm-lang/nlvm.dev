@@ -1,31 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Get started &mdash; NL &amp; nlvm</title>
-<meta name="description" content="Install the NL toolchain with one command (or build it from source), compile your first program to a single .nlp file, and run it on the nlvm virtual machine.">
-<link rel="stylesheet" href="assets/style.css">
-<meta property="og:image" content="https://nlvm.dev/assets/brand/social-preview.png">
-<meta name="twitter:card" content="summary_large_image">
-<link rel="icon" type="image/svg+xml" href="assets/brand/logo.svg">
-</head>
-<body>
-
-<header class="site-header">
-  <div class="container">
-    <a class="wordmark" href="index.html"><img class="glyph" src="assets/brand/logo.svg" alt="NL"><span class="name">nl<span class="vm">vm</span></span></a>
-    <nav class="site-nav">
-      <a href="index.html">Home</a>
-      <a href="tour.html">Tour</a>
-      <a href="demos.html">Demos</a>
-      <a href="getting-started.html" class="active">Get started</a>
-      <a href="devlog/index.html">Devlog</a>
-      <a class="gh" href="https://github.com/nlvm-lang/nlvm">GitHub</a>
-    </nav>
-  </div>
-</header>
-
 <main class="prose">
 
   <h1>Get started</h1>
@@ -69,16 +41,16 @@ Hello, world!</code></pre>
 
   <h2>4. Check your setup</h2>
   <pre class="sh"><code>$ nlc --version
-nlc 0.6.0 (nlvm-specs 0.8.44)
+{{NLC_VERSION_LINE}}
 $ nlvm --version
-nlvm 0.6.0 (nlvm-specs 0.8.44)</code></pre>
+{{NLVM_VERSION_LINE}}</code></pre>
   <p>Both report the crate version and the release of the <a href="https://github.com/nlvm-lang/nlvm-specs">language specification</a> this build implements.</p>
 
   <h2>5. Run the test suite (optional)</h2>
   <p>The repository ships a YAML conformance suite — one file per language feature — which is what CI runs:</p>
   <pre class="sh"><code>$ cargo test --workspace
 $ cargo run -p nl-test-runner -- tests
-144 passed, 0 failed, 144 total</code></pre>
+{{TEST_SUMMARY}}</code></pre>
   <p>Each test is a plain YAML file: NL source files, expected stdout, expected exit code. They double as executable documentation — <a href="https://github.com/nlvm-lang/nlvm/tree/main/tests">browse them</a> to see every feature in action.</p>
 
   <h2>Where to go next</h2>
@@ -89,19 +61,3 @@ $ cargo run -p nl-test-runner -- tests
   </ul>
 
 </main>
-
-<footer class="site-footer">
-  <div class="container">
-    <div>NL &amp; nlvm &mdash; MIT licensed, built in the open.</div>
-    <div>
-      <a href="https://github.com/nlvm-lang/nlvm">nlvm</a> ·
-      <a href="https://github.com/nlvm-lang/nlvm-specs">nlvm-specs</a> ·
-      <a href="https://github.com/nlvm-lang/nlvm-demos">nlvm-demos</a> ·
-      <a href="devlog/index.html">Devlog</a>
-    </div>
-  </div>
-</footer>
-
-<script src="assets/site.js"></script>
-</body>
-</html>

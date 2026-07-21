@@ -1,31 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Tour &mdash; the NL language by example</title>
-<meta name="description" content="A guided tour of the NL programming language: classes, enums, exhaustive match, null safety, checked exceptions, function types, closures and more &mdash; every example is a real program from the conformance suite.">
-<link rel="stylesheet" href="assets/style.css">
-<meta property="og:image" content="https://nlvm.dev/assets/brand/social-preview.png">
-<meta name="twitter:card" content="summary_large_image">
-<link rel="icon" type="image/svg+xml" href="assets/brand/logo.svg">
-</head>
-<body>
-
-<header class="site-header">
-  <div class="container">
-    <a class="wordmark" href="index.html"><img class="glyph" src="assets/brand/logo.svg" alt="NL"><span class="name">nl<span class="vm">vm</span></span></a>
-    <nav class="site-nav">
-      <a href="index.html">Home</a>
-      <a href="tour.html" class="active">Tour</a>
-      <a href="demos.html">Demos</a>
-      <a href="getting-started.html">Get started</a>
-      <a href="devlog/index.html">Devlog</a>
-      <a class="gh" href="https://github.com/nlvm-lang/nlvm">GitHub</a>
-    </nav>
-  </div>
-</header>
-
 <main class="container" style="padding-top:56px; padding-bottom:90px">
 
   <p class="kicker">Tour</p>
@@ -286,48 +258,7 @@ handler.openFile("data.txt"); // Warning W001 — return value is discarded</cod
   <div class="example reveal">
     <h3><span class="num">14</span>A real program: the release script</h3>
     <p class="desc">This is not a toy — it's <a href="https://github.com/nlvm-lang/nlvm/blob/main/tools/Release.nl"><code>tools/Release.nl</code></a>, the script that actually tags and pushes every nlvm release. Files, regular expressions and subprocesses from the standard library, checked IO errors, null-checked regex results.</p>
-    <pre class="nl"><code>namespace tools;
-
-class Release {
-    private static int run() throws IOException {
-        string changelog = system.io.File.readAllText("CHANGELOG.md");
-        auto header = system.text.Regex.matchFirst("## \\[([^\\]]+)\\]", changelog);
-        if (header == null) {
-            system.Err.println("No version header found in CHANGELOG.md (expected \"## [x.y.z]\").");
-            return 1;
-        }
-        string changelogVersion = header.groups[1];
-        string specsVersion = system.io.File.readAllText("SPECS_VERSION").trim();
-        string version = changelogVersion + "+" + specsVersion;
-        system.Out.println("Latest version: " + version);
-
-        string tagMessage = "Release " + changelogVersion + "\n" + "Specs " + specsVersion;
-        auto tagResult = system.ps.Process.run(new string[]{"git", "tag", "-a", version, "-m", tagMessage});
-        if (tagResult.exitCode != 0) {
-            system.Err.print(tagResult.stderr);
-            return tagResult.exitCode;
-        }
-        system.Out.println("Created tag " + version + ".");
-
-        auto pushResult = system.ps.Process.run(new string[]{"git", "push", "origin", version});
-        if (pushResult.exitCode != 0) {
-            system.Err.print(pushResult.stderr);
-            return pushResult.exitCode;
-        }
-        system.Out.println("Pushed tag " + version + " to origin.");
-
-        return 0;
-    }
-
-    public static int main(string[] args) {
-        try {
-            return Release.run();
-        } catch (IOException ex) {
-            system.Err.println("Error: " + ex.message);
-            return 1;
-        }
-    }
-}</code></pre>
+    <pre class="nl"><code>{{RELEASE_NL_SOURCE}}</code></pre>
   </div>
 
   <div class="note reveal" style="margin-top:56px">
@@ -340,19 +271,3 @@ class Release {
   </div>
 
 </main>
-
-<footer class="site-footer">
-  <div class="container">
-    <div>NL &amp; nlvm &mdash; MIT licensed, built in the open.</div>
-    <div>
-      <a href="https://github.com/nlvm-lang/nlvm">nlvm</a> ·
-      <a href="https://github.com/nlvm-lang/nlvm-specs">nlvm-specs</a> ·
-      <a href="https://github.com/nlvm-lang/nlvm-demos">nlvm-demos</a> ·
-      <a href="devlog/index.html">Devlog</a>
-    </div>
-  </div>
-</footer>
-
-<script src="assets/site.js"></script>
-</body>
-</html>

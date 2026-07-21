@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{TITLE}}</title>
+<meta name="description" content="{{DESCRIPTION}}">
+<link rel="stylesheet" href="{{ROOT}}assets/style.css">
+<meta property="og:image" content="https://nlvm.dev/assets/brand/social-preview.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/svg+xml" href="{{ROOT}}assets/brand/logo.svg">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container">
+    <a class="wordmark" href="{{ROOT}}index.html"><img class="glyph" src="{{ROOT}}assets/brand/logo.svg" alt="NL"><span class="name">nl<span class="vm">vm</span></span></a>
+    <nav class="site-nav">
+{{NAV}}
+    </nav>
+  </div>
+</header>
+
+{{CONTENT}}
+<footer class="site-footer">
+  <div class="container">
+    {{FOOTER_FIRST}}
+    <div>
+      <a href="https://github.com/nlvm-lang/nlvm">nlvm</a> ·
+      <a href="https://github.com/nlvm-lang/nlvm-specs">nlvm-specs</a> ·
+      <a href="https://github.com/nlvm-lang/nlvm-demos">nlvm-demos</a> ·
+      <a href="{{DEVLOG_HREF}}">Devlog</a>
+    </div>
+  </div>
+</footer>
+
+<script src="{{ROOT}}assets/site.js"></script>
+</body>
+</html>

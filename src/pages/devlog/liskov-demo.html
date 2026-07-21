@@ -1,31 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Liskov by the compiler, not by convention &mdash; nlvm devlog</title>
-<meta name="description" content="A new nlvm-demos entry built around one specific compiler rule: an overriding method's throws clause may only narrow, never widen, a parent's checked exceptions &mdash; Liskov substitution enforced at compile time instead of left to code review.">
-<link rel="stylesheet" href="../assets/style.css">
-<meta property="og:image" content="https://nlvm.dev/assets/brand/social-preview.png">
-<meta name="twitter:card" content="summary_large_image">
-<link rel="icon" type="image/svg+xml" href="../assets/brand/logo.svg">
-</head>
-<body>
-
-<header class="site-header">
-  <div class="container">
-    <a class="wordmark" href="../index.html"><img class="glyph" src="../assets/brand/logo.svg" alt="NL"><span class="name">nl<span class="vm">vm</span></span></a>
-    <nav class="site-nav">
-      <a href="../index.html">Home</a>
-      <a href="../tour.html">Tour</a>
-      <a href="../demos.html">Demos</a>
-      <a href="../getting-started.html">Get started</a>
-      <a href="index.html" class="active">Devlog</a>
-      <a class="gh" href="https://github.com/nlvm-lang/nlvm">GitHub</a>
-    </nav>
-  </div>
-</header>
-
 <main class="prose">
 
   <p class="kicker">Devlog · July 2026 · nlvm-demos</p>
@@ -96,19 +68,3 @@
   <p>Source and README are in <a href="https://github.com/nlvm-lang/nlvm-demos/tree/main/07_liskov">nlvm-demos/07_liskov</a>. See the <a href="../demos.html">demos page</a> for the rest of the set, and <a href="https://github.com/nlvm-lang/nlvm-specs/blob/main/docs/compiler.md#exception-inheritance-rules">compiler.md § Exception inheritance rules</a> for the rule's full specification.</p>
 
 </main>
-
-<footer class="site-footer">
-  <div class="container">
-    <div>NL &amp; nlvm &mdash; MIT licensed, built in the open.</div>
-    <div>
-      <a href="https://github.com/nlvm-lang/nlvm">nlvm</a> ·
-      <a href="https://github.com/nlvm-lang/nlvm-specs">nlvm-specs</a> ·
-      <a href="https://github.com/nlvm-lang/nlvm-demos">nlvm-demos</a> ·
-      <a href="index.html">Devlog</a>
-    </div>
-  </div>
-</footer>
-
-<script src="../assets/site.js"></script>
-</body>
-</html>
