@@ -124,6 +124,41 @@
     code.appendChild(link);
   });
 
+  /* ---------- dogfooding carousel ---------- */
+
+  var dogfoodTrack = document.getElementById("dogfood-track");
+  if (dogfoodTrack) {
+    var dogfoodSlides = dogfoodTrack.querySelectorAll(".dogfood-slide");
+    var dogfoodDotsBox = document.getElementById("dogfood-dots");
+    var dogfoodPrev = document.getElementById("dogfood-prev");
+    var dogfoodNext = document.getElementById("dogfood-next");
+    var dogfoodDots = [];
+    var dogfoodIndex = 0;
+
+    dogfoodSlides.forEach(function (_, i) {
+      var dot = document.createElement("button");
+      dot.type = "button";
+      dot.setAttribute("role", "tab");
+      dot.setAttribute("aria-label", "Slide " + (i + 1));
+      dot.addEventListener("click", function () { setDogfoodSlide(i); });
+      dogfoodDotsBox.appendChild(dot);
+      dogfoodDots.push(dot);
+    });
+
+    function setDogfoodSlide(i) {
+      dogfoodIndex = (i + dogfoodSlides.length) % dogfoodSlides.length;
+      dogfoodTrack.style.transform = "translateX(-" + (dogfoodIndex * 100) + "%)";
+      dogfoodDots.forEach(function (d, di) {
+        d.classList.toggle("active", di === dogfoodIndex);
+        d.setAttribute("aria-selected", di === dogfoodIndex ? "true" : "false");
+      });
+    }
+
+    dogfoodPrev.addEventListener("click", function () { setDogfoodSlide(dogfoodIndex - 1); });
+    dogfoodNext.addEventListener("click", function () { setDogfoodSlide(dogfoodIndex + 1); });
+    setDogfoodSlide(0);
+  }
+
   /* ---------- scroll reveal ---------- */
 
   var revealed = document.querySelectorAll(".reveal");

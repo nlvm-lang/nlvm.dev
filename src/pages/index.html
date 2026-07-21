@@ -112,15 +112,20 @@ $ nltest tests/
 
 <section class="block">
   <div class="container">
-    <div class="spotlight-panel reveal">
-    <div class="split">
-      <div>
-        <p class="kicker"><span class="knum">02</span>Dogfooding</p>
-        <h2 class="section-title">Our release script is written in NL</h2>
-        <p class="section-sub" style="margin-top:14px">Every nlvm release is tagged and pushed by <code>tools/Release.nl</code> — an NL program that reads the changelog with <code>system.text.Regex</code>, and drives git through <code>system.ps.Process</code>. Files, regexes, processes: the standard library is small but it does real work.</p>
-        <p style="margin-top:16px"><a href="https://github.com/nlvm-lang/nlvm/blob/main/tools/Release.nl">Read the full script →</a></p>
-      </div>
-      <pre class="nl"><code>string changelog =
+    <p class="kicker reveal"><span class="knum">02</span>Dogfooding</p>
+
+    <div class="dogfood-carousel reveal">
+      <div class="dogfood-track" id="dogfood-track">
+
+        <div class="dogfood-slide">
+          <div class="spotlight-panel">
+          <div class="split">
+            <div>
+              <h2 class="section-title">Our release script is written in NL</h2>
+              <p class="section-sub" style="margin-top:14px">Every nlvm release is tagged and pushed by <code>tools/Release.nl</code> — an NL program that reads the changelog with <code>system.text.Regex</code>, and drives git through <code>system.ps.Process</code>. Files, regexes, processes: the standard library is small but it does real work.</p>
+              <p style="margin-top:16px"><a href="https://github.com/nlvm-lang/nlvm/blob/main/tools/Release.nl">Read the full script →</a></p>
+            </div>
+            <pre class="nl"><code>string changelog =
     system.io.File.readAllText("CHANGELOG.md");
 auto header = system.text.Regex.matchFirst(
     "## \\[([^\\]]+)\\]", changelog);
@@ -137,7 +142,41 @@ if (tag.exitCode != 0) {
     system.Err.print(tag.stderr);
     return tag.exitCode;
 }</code></pre>
-    </div>
+          </div>
+          </div>
+        </div>
+
+        <div class="dogfood-slide">
+          <div class="spotlight-panel">
+          <div class="split">
+            <div>
+              <h2 class="section-title">This site's generator is written in NL, too</h2>
+              <p class="section-sub" style="margin-top:14px"><code>src/nl/Build.nl</code> is the NL program that builds nlvm.dev. It doesn't just template HTML — it shells out to <code>nlc</code>, <code>nlvm</code> and <code>nltest</code> to pull live version numbers and test counts into the pages you're reading right now. The page content itself is still plain HTML: we're dogfooding the generator, not claiming the whole site is NL.</p>
+              <p style="margin-top:16px"><a href="https://github.com/nlvm-lang/nlvm.dev/blob/main/src/nl/Build.nl">Read the full generator →</a></p>
+            </div>
+            <pre class="nl"><code>string nlcVersionLine = Build.runAndGetStdout(
+    new string[]{nlvmRepo + "/target/release/nlc",
+                 "--version"}).trim();
+
+system.ps.Process.setCwd(nlvmRepo);
+string testStdout = Build.runAndGetStdout(
+    new string[]{"target/release/nltest", "tests"});
+system.ps.Process.setCwd(originalCwd);
+string testSummary = Build.lastLine(testStdout);
+
+auto countMatch = system.text.Regex.matchFirst(
+    "(\\d+) total", testSummary);</code></pre>
+          </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="dogfood-controls">
+        <button type="button" class="dogfood-arrow" id="dogfood-prev" aria-label="Previous">‹</button>
+        <div class="dogfood-dots" id="dogfood-dots" role="tablist" aria-label="Dogfooding examples"></div>
+        <button type="button" class="dogfood-arrow" id="dogfood-next" aria-label="Next">›</button>
+      </div>
     </div>
   </div>
 </section>

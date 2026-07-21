@@ -1,0 +1,3 @@
+# GitHub's Linguist doesn't know the NL language and misdetects *.nl files as NewLisp.
+# Exclude them from language stats instead of showing a wrong label.
+*.nl linguist-detectable=false

@@ -484,6 +484,62 @@ pre.sh .out { color: var(--text-faint); }
 .spotlight-panel pre { border-color: var(--border-strong); }
 @media (max-width: 860px) { .spotlight-panel { padding: 28px 22px; } }
 
+/* ---------- dogfooding carousel ---------- */
+
+.dogfood-carousel { margin-top: 20px; overflow: hidden; }
+
+.dogfood-track {
+  display: flex;
+  transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dogfood-slide {
+  flex: 0 0 100%;
+  min-width: 0;
+}
+
+.dogfood-controls {
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+}
+
+.dogfood-arrow {
+  font-family: var(--mono);
+  font-size: 18px;
+  line-height: 1;
+  color: var(--text-faint);
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  width: 34px;
+  height: 34px;
+  cursor: pointer;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+.dogfood-arrow:hover { color: var(--text); border-color: var(--border-strong); }
+
+.dogfood-dots { display: flex; gap: 8px; }
+
+.dogfood-dots button {
+  width: 8px;
+  height: 8px;
+  padding: 0;
+  border-radius: 999px;
+  border: 1px solid var(--border-strong);
+  background: transparent;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+}
+.dogfood-dots button:hover { border-color: var(--primary); }
+.dogfood-dots button.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  transform: scale(1.2);
+}
+
 /* ---------- prose pages ---------- */
 
 .prose { max-width: 780px; padding: 56px 24px 90px; margin: 0 auto; }
