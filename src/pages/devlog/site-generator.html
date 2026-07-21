@@ -1,0 +1,34 @@
+<main class="prose">
+
+  <p class="kicker">Devlog · July 2026 · nlvm.dev</p>
+  <h1>The site that builds itself</h1>
+  <p class="lede">This site used to be hand-written HTML living inside the <a href="https://github.com/nlvm-lang/nlvm">nlvm</a> repo's <code>docs/</code> folder — five pages, one shared nav, and every change meaning five edits kept in sync by hand. <a href="https://github.com/nlvm-lang/nlvm.dev">nlvm.dev</a> is now its own repository, and the pages themselves are produced by an NL program. Two separate decisions led here, and it's worth writing down why.</p>
+
+  <h2>Four repos, one organization</h2>
+  <p>By July 2026 the project was <a href="https://github.com/nlvm-lang/nlvm-specs">nlvm-specs</a>, <a href="https://github.com/nlvm-lang/nlvm">nlvm</a>, <a href="https://github.com/nlvm-lang/nlvm-demos">nlvm-demos</a>, and this site — four repositories, all under <a href="https://github.com/tivins">a personal account</a>, with more ideas already queued. That's the point where "personal repo" stops being a convenience and starts being a source of confusion: no shared identity, no natural place for the next one. The fix was to create the <code>nlvm-lang</code> GitHub organization, transfer all four projects into it, and point <code>nlvm.dev</code> and <code>specs.nlvm.dev</code> at their GitHub Pages. The domain and the dedicated site repo followed naturally once the org existed — they weren't the starting motivation, just the obvious next step.</p>
+
+  <h2>Why generate the site in NL</h2>
+  <p>The immediate reason was maintenance: hand-duplicated HTML across pages, with a shared nav and footer copy-pasted five times, was already becoming impossible to keep consistent. Any templating approach would have fixed that — PHP or Python would have worked fine. The choice of NL was deliberate: the toolchain was far enough along to build real tooling with it, and a static site generator is exactly the kind of ordinary, unglamorous program that tells you whether a language is usable outside its own test suite. This is the same instinct behind <a href="initial-build.html">the toolchain releasing itself</a> via <code>tools/Release.nl</code> — dogfooding isn't a slogan here, it's a second source of bug reports.</p>
+
+  <h2>How Build.nl works</h2>
+  <p><code>src/nl/Build.nl</code> is about 235 lines, plus two small data classes, <code>PageSpec</code> and <code>NavItem</code>. There's no framework: a page is a content fragment in <code>src/pages/</code> and a <code>PageSpec</code> entry (title, description, paths, which nav item is active); <code>src/layout.html</code> is the one shared shell, and generation is a sequence of <code>{{PLACEHOLDER}}</code> string replacements — <code>{{NAV}}</code>, <code>{{CONTENT}}</code>, <code>{{TITLE}}</code>, and so on:</p>
+  <pre class="nl"><code>string pageOut = layout;
+pageOut = pageOut.replace("{{TITLE}}", page.title);
+pageOut = pageOut.replace("{{NAV}}", nav);
+pageOut = pageOut.replace("{{CONTENT}}", content);
+system.io.File.writeAllText(page.outPath, pageOut);</code></pre>
+  <p>Root-relative links are the one place this needed real logic rather than string substitution: devlog pages live one directory deeper than the rest, so every <code>PageSpec</code> carries a <code>root</code> prefix, and the nav renderer special-cases the active <code>devlog</code> link so that a devlog post links to <code>index.html</code> instead of back to itself through <code>../devlog/index.html</code>.</p>
+  <p>The more interesting part is that some placeholders aren't static text — they come from actually running the toolchain. The build step shells out to the sibling <code>nlvm</code> checkout's release binaries via <code class="stdlib">system.ps.Process</code>, runs the real <code>nltest</code> conformance suite, and regex-extracts the pass count from its own stdout:</p>
+  <pre class="nl"><code>string testStdout = Build.runAndGetStdout(
+    new string[]{"target/release/nltest", "tests"});
+string testSummary = Build.lastLine(testStdout);
+auto countMatch = system.text.Regex.matchFirst("(\\d+) total", testSummary);</code></pre>
+  <p>This page you're reading goes through the same substitution pass as every other one: the test count quoted on <a href="initial-build.html">the initial-build post</a> is filled in from that live regex match, not typed in by hand. The version banner and the <code>Release.nl</code> source quoted on the getting-started page come from the same run. If the numbers on the site are wrong, it's because the toolchain gave the wrong answer — not because someone forgot to update a page.</p>
+
+  <h2>What dogfooding actually found</h2>
+  <p>Small, but real: GitHub's Linguist doesn't know NL and was mislabeling every <code>.nl</code> file as NewLisp in the repo's language stats, fixed with a one-line <code>.gitattributes</code>. Not a compiler bug, but exactly the kind of friction that only shows up once a language has to coexist with the rest of the ecosystem's tooling instead of just its own test suite — which was the actual argument for building the site this way in the first place.</p>
+
+  <hr>
+  <p>Source is in <a href="https://github.com/nlvm-lang/nlvm.dev">nlvm.dev</a>, mainly <a href="https://github.com/nlvm-lang/nlvm.dev/blob/main/src/nl/Build.nl"><code>src/nl/Build.nl</code></a>. The four repositories now live under the <a href="https://github.com/nlvm-lang">nlvm-lang</a> organization.</p>
+
+</main>
