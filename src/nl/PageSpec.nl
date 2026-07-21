@@ -8,10 +8,9 @@ class PageSpec {
     public string root;
     public bool inDevlog;
     public string navActiveId;
-    public string footerFirst;
 
     public construct(string title, string description, string contentPath, string outPath,
-                      string root, bool inDevlog, string navActiveId, string footerFirst) {
+                      string root, bool inDevlog, string navActiveId) {
         this.title = title;
         this.description = description;
         this.contentPath = contentPath;
@@ -19,6 +18,5 @@ class PageSpec {
         this.root = root;
         this.inDevlog = inDevlog;
         this.navActiveId = navActiveId;
-        this.footerFirst = footerFirst;
     }
 }
