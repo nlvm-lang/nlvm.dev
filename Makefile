@@ -1,7 +1,10 @@
 
-.phony: all build compile
+.phony: all build compile raster
 
-all: compile build
+all: raster compile build
+
+raster:
+	$(MAKE) -C brand raster_logo
 
 compile:
 	nlc src/nl -o Build.nlp

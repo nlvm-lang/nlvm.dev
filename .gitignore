@@ -6,3 +6,5 @@
 .venv/
 
 /Build.nlp
+brand/generated/
+brand/private/

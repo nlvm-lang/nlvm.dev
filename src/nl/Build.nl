@@ -22,6 +22,45 @@ class Build {
         return result.stdout;
     }
 
+    private static void copyBinaryFile(string src, string dest) throws IOException {
+        auto in = system.io.File.open(src, system.io.FileMode.Read);
+        auto out = system.io.File.open(dest, system.io.FileMode.ReadWriteTruncate);
+        byte[] buffer = new byte[8192];
+        int n = in.read(buffer, 0, buffer.length());
+        while (n > 0) {
+            out.write(buffer, 0, n);
+            n = in.read(buffer, 0, buffer.length());
+        }
+        in.close();
+        out.close();
+    }
+
+    private static string baseName(string path) {
+        string[] parts = path.split("/");
+        return parts[parts.length() - 1];
+    }
+
+    private static void copyBrandAssets() throws IOException {
+        if (!system.io.Directory.exists("docs/assets/brand")) {
+            system.io.Directory.create("docs/assets/brand");
+        }
+
+        system.io.File.writeAllText("docs/assets/brand/nl_logo.svg",
+            system.io.File.readAllText("brand/nl_logo.svg"));
+        system.io.File.writeAllText("docs/assets/brand/nl_logo_letters.svg",
+            system.io.File.readAllText("brand/nl_logo_letters.svg"));
+        system.io.File.writeAllText("docs/assets/brand/social-preview.svg",
+            system.io.File.readAllText("brand/social-preview.svg"));
+        Build.copyBinaryFile("brand/social-preview.png", "docs/assets/brand/social-preview.png");
+
+        string[] brandPngs = system.io.File.glob("brand/generated", ".*\\.png");
+        for (auto pngPath : brandPngs) {
+            Build.copyBinaryFile(pngPath, "docs/assets/brand/" + Build.baseName(pngPath));
+        }
+
+        system.Out.println("wrote docs/assets/brand");
+    }
+
     private static system.List<NavItem> navItems() {
         auto items = new system.List<NavItem>();
         items.pushBack(new NavItem(id: "home", label: "Home", href: "index.html", external: false));
@@ -216,6 +255,12 @@ class Build {
         siteJs = siteJs.replace("{{TEST_SUMMARY}}", testSummary);
         system.io.File.writeAllText("docs/assets/site.js", siteJs);
         system.Out.println("wrote docs/assets/site.js");
+
+        string styleCss = system.io.File.readAllText("src/assets/style.css");
+        system.io.File.writeAllText("docs/assets/style.css", styleCss);
+        system.Out.println("wrote docs/assets/style.css");
+
+        Build.copyBrandAssets();
 
         return 0;
     }

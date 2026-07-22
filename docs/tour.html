@@ -8,13 +8,16 @@
 <link rel="stylesheet" href="assets/style.css">
 <meta property="og:image" content="https://nlvm.dev/assets/brand/social-preview.png">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="icon" type="image/svg+xml" href="assets/brand/logo.svg">
+<link rel="icon" type="image/svg+xml" href="assets/brand/nl_logo.svg">
+
+<link rel="preconnect" href="https://fonts.googleapis.com"></link>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"></link>
 </head>
 <body>
 
 <header class="site-header">
   <div class="container">
-    <a class="wordmark" href="index.html"><img class="glyph" src="assets/brand/logo.svg" alt="NL"><span class="name">nl<span class="vm">vm</span></span></a>
+    <a class="wordmark" href="index.html"><img class="glyph" src="assets/brand/nl_logo.svg" alt="NL"><span class="name">nl<span class="vm">vm</span></span></a>
     <nav class="site-nav">
       <a href="index.html">Home</a>
       <a href="tour.html" class="active">Tour</a>
@@ -288,43 +291,34 @@ handler.openFile("data.txt"); // Warning W001 — return value is discarded</cod
     <p class="desc">This is not a toy — it's <a href="https://github.com/nlvm-lang/nlvm/blob/main/tools/Release.nl"><code>tools/Release.nl</code></a>, the script that actually tags and pushes every nlvm release. Files, regular expressions and subprocesses from the standard library, checked IO errors, null-checked regex results.</p>
     <pre class="nl"><code>namespace tools;
 
-class Release {
-    private static int run() throws IOException {
+class Release 
+{
+    public construct() {
+    }
+   
+    public string findChangelogVersion() throws IOException 
+    {
         string changelog = system.io.File.readAllText("CHANGELOG.md");
         auto header = system.text.Regex.matchFirst("## \\[([^\\]]+)\\]", changelog);
         if (header == null) {
-            system.Err.println("No version header found in CHANGELOG.md (expected \"## [x.y.z]\").");
-            return 1;
+            return "";
         }
-        string changelogVersion = header.groups[1];
-        string specsVersion = system.io.File.readAllText("SPECS_VERSION").trim();
-        string version = changelogVersion + "+" + specsVersion;
-        system.Out.println("Latest version: " + version);
-
-        string tagMessage = "Release " + changelogVersion + "\n" + "Specs " + specsVersion;
-        auto tagResult = system.ps.Process.run(new string[]{"git", "tag", "-a", version, "-m", tagMessage});
-        if (tagResult.exitCode != 0) {
-            system.Err.print(tagResult.stderr);
-            return tagResult.exitCode;
-        }
-        system.Out.println("Created tag " + version + ".");
-
-        auto pushResult = system.ps.Process.run(new string[]{"git", "push", "origin", version});
-        if (pushResult.exitCode != 0) {
-            system.Err.print(pushResult.stderr);
-            return pushResult.exitCode;
-        }
-        system.Out.println("Pushed tag " + version + " to origin.");
-
-        return 0;
+        return header.groups[1];
     }
 
-    public static int main(string[] args) {
-        try {
-            return Release.run();
-        } catch (IOException ex) {
-            system.Err.println("Error: " + ex.message);
-            return 1;
+    public void createTag(string version, string tagMessage) throws Exception 
+    {
+        auto result = system.ps.Process.run(new string[]{"git", "tag", "-a", version, "-m", tagMessage});
+        if (result.exitCode != 0) {
+            throw new Exception(result.stderr);
+        }
+    }
+
+    public void pushTag(string version) throws Exception
+    {
+        auto result = system.ps.Process.run(new string[]{"git", "push", "origin", version});
+        if (result.exitCode != 0) {
+            throw new Exception(result.stderr);
         }
     }
 }</code></pre>
