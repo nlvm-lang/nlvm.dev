@@ -215,11 +215,14 @@
       label: "stack traces",
       steps: [
         { note: "# every exception knows where it came from" },
-        { cmd: "nlvm crash.nlp" },
+        { cmd: "nlvm app.nlp" },
         { out: [
           ["err", "Unhandled exception: ArithmeticException: division by zero"],
-          ["out", "    at app/Main.nl:4"],
-          ["out", "    at app/Main.nl:7"]
+          ["out", "    at app/orders/PriceCalculator.nl:22"],
+          ["out", "    at app/orders/OrderService.nl:47"],
+          ["out", "    at app/orders/OrderController.nl:15"],
+          ["out", "    at app/http/Router.nl:31"],
+          ["out", "    at app/Main.nl:9"]
         ] }
       ]
     },

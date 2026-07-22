@@ -32,20 +32,11 @@
 <main class="prose">
 
   <h1>Get started</h1>
-  <p class="lede">From a clean machine to a running NL program in about a minute. The toolchain is three binaries: <code>nlc</code> the compiler, <code>nlvm</code> the virtual machine, and <code>nltest</code> the conformance test runner.</p>
+  <p class="lede">Install, write ten lines of NL, run them. The toolchain is two binaries: <code>nlc</code> the compiler and <code>nlvm</code> the virtual machine.</p>
 
-  <h2>1. Install nlvm</h2>
-  <p>The fastest way, for most people — installs prebuilt <code>nlc</code> and <code>nlvm</code> binaries, no Rust toolchain required:</p>
+  <h2>1. Install</h2>
   <pre class="sh"><code>$ curl -fsSL https://nlvm.dev/install.sh | bash</code></pre>
-  <p>Prebuilt binaries are published for Linux (x86_64) and macOS (Apple Silicon). It installs into <code>~/.local/bin</code> — make sure that's on your <code>$PATH</code>.</p>
-
-  <h3>Building from source</h3>
-  <p>On another platform, or want to build it yourself? You need a <a href="https://rustup.rs">Rust toolchain</a>. Then:</p>
-  <pre class="sh"><code>$ git clone https://github.com/nlvm-lang/nlvm.git
-$ cd nlvm
-$ cargo build -r
-$ ./install.sh</code></pre>
-  <p>Run from inside the cloned repo, <code>install.sh</code> detects the source checkout and symlinks the binaries it just built into <code>~/.local/bin</code> instead of downloading one.</p>
+  <p>Installs prebuilt <code>nlc</code> and <code>nlvm</code> binaries into <code>~/.local/bin</code> — no Rust toolchain required. Published for Linux (x86_64) and macOS (Apple Silicon); building from source works everywhere else, see <a href="#advanced">below</a>.</p>
 
   <h2>2. Write a program</h2>
   <p>Create <code>Main.nl</code>:</p>
@@ -59,37 +50,48 @@ class Main {
 }</code></pre>
 
   <h2>3. Compile and run</h2>
-  <p><code>nlc</code> compiles your sources into a single <code>.nlp</code> program file:</p>
   <pre class="sh"><code>$ nlc Main.nl -o Main.nlp
 $ nlvm Main.nlp
 Hello, world!</code></pre>
-  <p>Point <code>-o</code> at a directory instead and the file is named after the class that defines <code>main</code>:</p>
-  <pre class="sh"><code>$ nlc Main.nl -o out/
-$ nlvm out/hello.Main.nlp
-Hello, world!</code></pre>
-
-  <div class="note">A <code>.nlp</code> file bundles every module of your program — it's the only artifact you ship. Prefer one <code>.nlm</code> module per class? <code>nlc --emit-modules Main.nl -o out/</code> gives you the exploded layout, and <code>nlvm out/</code> loads a whole directory.</div>
-
-  <h2>4. Check your setup</h2>
-  <pre class="sh"><code>$ nlc --version
-nlc 0.7.1 (nlvm-specs 0.8.47)
-$ nlvm --version
-nlvm 0.7.1 (nlvm-specs 0.8.47)</code></pre>
-  <p>Both report the crate version and the release of the <a href="https://github.com/nlvm-lang/nlvm-specs">language specification</a> this build implements.</p>
-
-  <h2>5. Run the test suite (optional)</h2>
-  <p>The repository ships a YAML conformance suite — one file per language feature — which is what CI runs:</p>
-  <pre class="sh"><code>$ cargo test --workspace
-$ cargo run -p nl-test-runner -- tests
-154 passed, 0 failed, 154 total</code></pre>
-  <p>Each test is a plain YAML file: NL source files, expected stdout, expected exit code. They double as executable documentation — <a href="https://github.com/nlvm-lang/nlvm/tree/main/tests">browse them</a> to see every feature in action.</p>
+  <p>That's it — <code>Main.nlp</code> bundles the whole program into one file, the only artifact you ship.</p>
 
   <h2>Where to go next</h2>
   <ul>
-    <li>Take the <a href="tour.html">language tour</a> — ten examples from hello-world to a real release script.</li>
+    <li>Take the <a href="tour.html">language tour</a> — ten examples from hello-world to a real release script, showing what actually makes NL different: null safety, checked exceptions, exhaustive matching.</li>
     <li>Read the <a href="https://github.com/nlvm-lang/nlvm-specs">specification</a> — grammar, semantics, compile-time checks, bytecode format.</li>
     <li>Follow the <a href="devlog/index.html">devlog</a> — how the compiler and VM are being built.</li>
   </ul>
+
+  <h2 id="advanced">Advanced</h2>
+
+  <h3>Building from source</h3>
+  <p>Need a platform we don't publish binaries for, or want to build it yourself? You need a <a href="https://rustup.rs">Rust toolchain</a>. Then, from a clone of the repo:</p>
+  <pre class="sh"><code>$ git clone https://github.com/nlvm-lang/nlvm.git
+$ cd nlvm
+$ cargo build -r
+$ ./install.sh</code></pre>
+  <p>Run from inside the cloned repo, <code>install.sh</code> detects the source checkout and symlinks the binaries it just built into <code>~/.local/bin</code> instead of downloading one.</p>
+
+  <h3>Multi-module output</h3>
+  <p>Point <code>-o</code> at a directory instead of a file and the output is named after the class that defines <code>main</code>:</p>
+  <pre class="sh"><code>$ nlc Main.nl -o out/
+$ nlvm out/hello.Main.nlp
+Hello, world!</code></pre>
+  <div class="note">Prefer one <code>.nlm</code> module per class instead of a single bundled <code>.nlp</code>? <code>nlc --emit-modules Main.nl -o out/</code> gives you the exploded layout, and <code>nlvm out/</code> loads a whole directory.</div>
+
+  <h3>Check your setup</h3>
+  <pre class="sh"><code>$ nlc --version
+nlc 0.9.0 (nlvm-specs 0.8.47)
+$ nlvm --version
+nlvm 0.9.0 (nlvm-specs 0.8.47)</code></pre>
+  <p>Both report the crate version and the release of the <a href="https://github.com/nlvm-lang/nlvm-specs">language specification</a> this build implements.</p>
+
+  <h3>Run the test suite</h3>
+  <p>The repository ships a YAML conformance suite — one file per language feature — which is what CI runs:</p>
+  <pre class="sh"><code>$ cargo test --workspace
+$ cargo run -p nl-test-runner -- tests
+157 passed, 0 failed, 157 total</code></pre>
+  <p>Each test is a plain YAML file: NL source files, expected stdout, expected exit code. They double as executable documentation — <a href="https://github.com/nlvm-lang/nlvm/tree/main/tests">browse them</a> to see every feature in action.</p>
 
 </main>
 

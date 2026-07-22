@@ -215,11 +215,14 @@
       label: "stack traces",
       steps: [
         { note: "# every exception knows where it came from" },
-        { cmd: "nlvm crash.nlp" },
+        { cmd: "nlvm app.nlp" },
         { out: [
           ["err", "Unhandled exception: ArithmeticException: division by zero"],
-          ["out", "    at app/Main.nl:4"],
-          ["out", "    at app/Main.nl:7"]
+          ["out", "    at app/orders/PriceCalculator.nl:22"],
+          ["out", "    at app/orders/OrderService.nl:47"],
+          ["out", "    at app/orders/OrderController.nl:15"],
+          ["out", "    at app/http/Router.nl:31"],
+          ["out", "    at app/Main.nl:9"]
         ] }
       ]
     },
@@ -228,9 +231,9 @@
       steps: [
         { note: "# one toolchain, one versioned spec" },
         { cmd: "nlc --version" },
-        { out: [["out", "nlc 0.7.1 (nlvm-specs 0.8.47)"]] },
+        { out: [["out", "nlc 0.9.0 (nlvm-specs 0.8.47)"]] },
         { cmd: "nltest tests/" },
-        { out: [["ok", "154 passed, 0 failed, 154 total"]] }
+        { out: [["ok", "157 passed, 0 failed, 157 total"]] }
       ]
     }
   ];
