@@ -231,8 +231,14 @@ a:hover { color: var(--primary-bright); }
 .btn-primary { background: var(--primary); color: #06231c; }
 .btn-primary:hover { background: var(--primary-bright); color: #06231c; box-shadow: 0 4px 24px var(--primary-glow); }
 
-.btn-ghost { border: 1px solid var(--border-strong); color: var(--text); }
-.btn-ghost:hover { border-color: var(--primary); color: var(--primary); }
+.btn-outline { border: 1px solid var(--border-strong); color: var(--text); }
+.btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+
+.btn-ghost { border: 1px solid transparent; color: var(--text); }
+.btn-ghost:hover { border-color: transparent; background: var(--bg-raised); }
+
+.btn-ghost-outline { border: 1px solid transparent; color: var(--text); }
+.btn-ghost-outline:hover { border-color: var(--primary); color: var(--primary); }
 
 /* ---------- terminal ---------- */
 

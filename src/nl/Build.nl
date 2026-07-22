@@ -109,7 +109,7 @@ class Build {
         auto pages = new system.List<PageSpec>();
 
         pages.pushBack(new PageSpec(
-            title: "NL &mdash; a small language that takes correctness seriously",
+            title: "NL &mdash; a language that takes correctness seriously",
             description: "NL is a statically typed, class-based programming language with native null safety, checked exceptions and exhaustive matching, compiled to compact bytecode and run by nlvm, a lightweight virtual machine written in Rust.",
             contentPath: "src/pages/index.html",
             outPath: "docs/index.html",
