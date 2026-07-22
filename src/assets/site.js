@@ -8,12 +8,16 @@
     "namespace", "use", "class", "interface", "enum",
     "public", "private", "protected", "static", "readonly",
     "extends", "implements", "construct", "destruct",
-    "if", "else", "while", "for", "break", "continue", "return", "match", "default",
-    "try", "catch", "finally", "throw", "throws",
+    "if", "else", "while", "for", "break", "continue", "return", "match",
+    "try", "finally",
     "new", "this", "super", "instanceof", "ref",
     "auto", "void", "int", "float", "bool", "string",
-    "null", "true", "false"
+    "true", "false"
   ]);
+
+  // Brand rule: amber is reserved for the language's own risk semantics —
+  // throws, nullable, unhandled match arms — never blended with jade.
+  var RISK_KEYWORDS = new Set(["throw", "throws", "catch", "null", "default"]);
 
   function escapeHtml(s) {
     return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
@@ -38,7 +42,9 @@
       } else if (m[3]) {
         html += '<span class="tok-num">' + text + "</span>";
       } else if (m[4]) {
-        if (KEYWORDS.has(m[4])) {
+        if (RISK_KEYWORDS.has(m[4])) {
+          html += '<span class="tok-risk">' + text + "</span>";
+        } else if (KEYWORDS.has(m[4])) {
           html += '<span class="tok-kw">' + text + "</span>";
         } else if (/^[A-Z]/.test(m[4])) {
           html += '<span class="tok-type">' + text + "</span>";

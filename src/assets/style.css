@@ -1,24 +1,25 @@
 /* nlvm site — dark theme, teal primary */
 
 :root {
-  --bg: #0c1110;
-  --bg-raised: #101917;
-  --bg-code: #0e1514;
-  --border: #21302b;
+  --bg: #0a0f0c;
+  --bg-raised: #101613;
+  --bg-code: #0d110e;
+  --border: #263832;
   --border-strong: #2e423b;
-  --text: #dbe4e0;
-  --text-muted: #90a49d;
+  --text: #e7eeea;
+  --text-muted: #93a69e;
   --text-faint: #5f7370;
-  --primary: #3ecfae;
-  --primary-bright: #5fe3c4;
-  --primary-dim: rgba(62, 207, 174, 0.12);
-  --primary-glow: rgba(62, 207, 174, 0.25);
-  --code-keyword: #3ecfae;
+  --primary: #35c99b;
+  --primary-bright: #4ee0ac;
+  --primary-dim: rgba(53, 201, 155, 0.12);
+  --primary-glow: rgba(53, 201, 155, 0.25);
+  --code-keyword: #35c99b;
   --code-type: #82b8dd;
   --code-string: #d4b478;
   --code-number: #c39fd4;
   --code-comment: #5c7069;
   --code-punct: #8ea39c;
+  --code-risk: #e0a458;
   --mono: "IBM Plex Mono", ui-monospace, "JetBrains Mono", "Fira Code", "Cascadia Code", Menlo, Consolas, monospace;
   --sans: "IBM Plex Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
@@ -158,7 +159,6 @@ a:hover { color: var(--primary-bright); }
   width: 44px;
   height: 44px;
   border-radius: 11px;
-  box-shadow: 0 0 30px var(--primary-glow);
 }
 
 .hero-eyebrow {
@@ -221,6 +221,7 @@ a:hover { color: var(--primary-bright); }
   display: inline-block;
   padding: 11px 22px;
   border-radius: 9px;
+  font-family: var(--mono);
   font-size: 15px;
   font-weight: 600;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
@@ -394,6 +395,7 @@ pre::-webkit-scrollbar-track { background: transparent; }
 .tok-num { color: var(--code-number); }
 .tok-com { color: var(--code-comment); font-style: italic; }
 .tok-punct { color: var(--code-punct); }
+.tok-risk { color: var(--code-risk); }
 
 pre .copy-btn {
   position: absolute;
