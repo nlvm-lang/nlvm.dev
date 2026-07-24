@@ -1,5 +1,5 @@
 
-.phony: all build compile raster
+.phony: all build compile raster server publish
 
 all: raster compile build
 
@@ -14,3 +14,8 @@ build:
 
 server:
 	python3 -m http.server -d docs/
+
+publish:
+	gitagent -y
+	git push
+

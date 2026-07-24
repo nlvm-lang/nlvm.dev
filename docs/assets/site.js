@@ -231,9 +231,9 @@
       steps: [
         { note: "# one toolchain, one versioned spec" },
         { cmd: "nlc --version" },
-        { out: [["out", "nlc 0.9.0 (nlvm-specs 0.8.47)"]] },
+        { out: [["out", "nlc 0.12.5 (nlvm-specs 0.8.47)"]] },
         { cmd: "nltest tests/" },
-        { out: [["ok", "157 passed, 0 failed, 157 total"]] }
+        { out: [["ok", "197 passed, 0 failed, 197 total"]] }
       ]
     }
   ];
