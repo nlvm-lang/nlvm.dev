@@ -12,9 +12,11 @@ wallpaper:
 	rsvg-convert -w 2560 -h 1440 $(WP)-a-field.svg -o $(WP)-a-field-2560x1440.png
 	rsvg-convert -w 2560 -h 1440 $(WP)-b-sheet.svg -o $(WP)-b-sheet-2560x1440.png
 	rsvg-convert -w 2560 -h 1440 $(WP)-c-echo.svg  -o $(WP)-c-echo-2560x1440.png
+	rsvg-convert -w 2560 -h 1440 $(WP)-d-lumen.svg -o $(WP)-d-lumen-2560x1440.png
 	rsvg-convert -w 3840 -h 2160 $(WP)-a-field.svg -o $(WP)-a-field-3840x2160.png
 	rsvg-convert -w 3840 -h 2160 $(WP)-b-sheet.svg -o $(WP)-b-sheet-3840x2160.png
 	rsvg-convert -w 3840 -h 2160 $(WP)-c-echo.svg  -o $(WP)-c-echo-3840x2160.png
+	rsvg-convert -w 3840 -h 2160 $(WP)-d-lumen.svg -o $(WP)-d-lumen-3840x2160.png
 
 raster:
 	$(MAKE) -C brand all

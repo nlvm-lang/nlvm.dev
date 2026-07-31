@@ -126,6 +126,89 @@ class Wallpaper {
         o.write("<g fill=\"none\" stroke-width=\"44\" stroke-linecap=\"square\" stroke-linejoin=\"miter\">\n");
     }
 
+    private static void stop(system.io.FileHandle o, string offset, string color, int alpha) throws IOException {
+        o.write("<stop offset=\"" + offset + "\" stop-color=\"" + color + "\" stop-opacity=\"" + Wallpaper.op(alpha) + "\"/>");
+    }
+
+    // A straight-edged shaft of light: the triangle between a point source and
+    // a slice of the far edge. Arcs are still out, so volumetric light is made
+    // of polygons - which is also why it stays this crisp when it is rasterised
+    // at 4K.
+    private static void wedge(system.io.FileHandle o, int sx, int sy, int ex,
+                              int y1, int y2, string fill, int alpha) throws IOException {
+        o.write("<path d=\"M" + Wallpaper.i(sx) + " " + Wallpaper.i(sy) + "L" + Wallpaper.i(ex) + " " + Wallpaper.i(y1) + "L" + Wallpaper.i(ex) + " " + Wallpaper.i(y2) + "Z\" fill=\"" + fill + "\" fill-opacity=\"" + Wallpaper.op(alpha) + "\"/>\n");
+    }
+
+    // Where the ray from (sx,sy) through (px,py) is, once it reaches atX.
+    private static int ray(int sx, int sy, int px, int py, int atX) {
+        return sy + ((py - sy) * (atX - sx)) / (px - sx);
+    }
+
+    // The beam. One wide shaft aimed straight at the mark - so that the shadow
+    // has something to be a shadow *of* - and a scatter of thinner ones around
+    // it for the air. Everything goes through the gobo, so the mark prints
+    // itself into the light instead of sitting on top of it.
+    //
+    // It is called twice: once over the sheet and once clipped to the code
+    // panel, weaker, so the light reads as landing on a surface rather than
+    // floating over one. The two copies line up only because each call is given
+    // a freshly seeded Rng - which is what Rng.nl is for.
+    private static void fan(system.io.FileHandle o, Rng rng, int sx, int sy,
+                            int mx, int my, int strength) throws IOException {
+        o.write("<g mask=\"url(#gobo)\" opacity=\"" + Wallpaper.op(strength) + "\">\n");
+
+        // the core, framed on the mark's ink box with 60px to spare
+        int lead = mx - 134;
+        int top = Wallpaper.ray(sx, sy, lead, my - 214, 2560);
+        int bot = Wallpaper.ray(sx, sy, lead, my + 214, 2560);
+        Wallpaper.wedge(o, sx, sy, 2560, top, bot, "url(#ray)", 15);
+
+        int t = -1100;
+        while (t < 2600) {
+            int w = rng.range(30, 190);
+            int a = rng.range(4, 11);
+            Wallpaper.wedge(o, sx, sy, 2560, t, t + w, "url(#ray)", a);
+            t = t + w + rng.range(70, 260);
+        }
+        o.write("</g>\n");
+    }
+
+    // The mark, used as a gobo. A point source casts the shadow of a shape as
+    // that same shape scaled about the source: at factor s, a point P lands on
+    // S + s(P - S). So the whole shadow cone is nothing but the mark drawn
+    // again and again about the source, larger every time, in black, inside a
+    // mask - no ray casting, no arcs, no imported bitmap.
+    //
+    // The light that gets past it is the light that went through the counter of
+    // the n and the gap before the l, which is the point: what identifies the
+    // mark is as much what is not drawn as what is.
+    private static void gobo(system.io.FileHandle o, int sx, int sy, int mx, int my, int k0) throws IOException {
+        o.write("<mask id=\"gobo\" maskUnits=\"userSpaceOnUse\" x=\"0\" y=\"0\" width=\"2560\" height=\"1440\">\n");
+        o.write("<rect width=\"2560\" height=\"1440\" fill=\"#ffffff\"/>\n");
+        // The cone is a union of discrete copies, so its outline is a staircase
+        // one step long - 34px here. Blurring the whole stack costs one filter
+        // and buys two things: the staircase disappears, and the shadow gets the
+        // soft edge every real shadow has. Nothing casts a razor.
+        o.write("<g filter=\"url(#penumbra)\">\n");
+        Wallpaper.openMarks(o);
+        // A 0.6% step drifts a copy by ~34px against a stroke ~50px wide, so
+        // consecutive copies still overlap and the cone comes out solid rather
+        // than striped. The loop stops as soon as a copy has left the sheet.
+        for (int s = 1000; s <= 12000; s = s + 6) {
+            int cx = sx + ((mx - sx) * s) / 1000;
+            int cy = sy + ((my - sy) * s) / 1000;
+            if (cx > 3600 || cy > 2600) { break; }
+            Wallpaper.mark(o, cx, cy, (k0 * s) / 1000, "#000000", 100, true);
+        }
+        o.write("</g>\n</g>\n</mask>\n");
+    }
+
+    // One line of source, as its own <text>. The line owns its brightness and
+    // the scanner owns its colours; the two never negotiate.
+    private static void codeLine(system.io.FileHandle o, int x, int y, int lum, string src) throws IOException {
+        o.write("<text x=\"" + Wallpaper.i(x) + "\" y=\"" + Wallpaper.i(y) + "\" xml:space=\"preserve\" fill-opacity=\"" + Wallpaper.op(lum) + "\">" + Highlight.tspans(src) + "</text>\n");
+    }
+
     private static void wordmark(system.io.FileHandle o, int x, int y, int size, int alpha) throws IOException {
         o.write("<text x=\"" + Wallpaper.i(x) + "\" y=\"" + Wallpaper.i(y) + "\" font-family=\"" + Wallpaper.mono() + "\" font-size=\"" + Wallpaper.i(size) + "\" font-weight=\"700\" text-anchor=\"end\" fill-opacity=\"" + Wallpaper.op(alpha) + "\">");
         o.write("<tspan fill=\"" + Wallpaper.text() + "\">nl</tspan><tspan fill=\"" + Wallpaper.faint() + "\">vm</tspan><tspan fill=\"" + Wallpaper.jade() + "\">_</tspan></text>\n");
@@ -380,6 +463,217 @@ class Wallpaper {
         system.Out.println("wrote " + path);
     }
 
+    // ---------------------------------------------------------------- D ----
+    // "Lumen". The language itself, on the wall. Twenty lines of real NL - they
+    // compile with nlc and run on nlvm, exit 0 - standing in a beam that comes
+    // in from off the sheet, hits the mark, and carries its shadow across the
+    // code. Brightness is the argument, as in concept A: the accent falls on
+    // the one line that holds the whole idea, `public int|null read() throws
+    // IOException`, and no other line drops below 46. Nothing is hidden.
+    //
+    // And nothing is imported. The shafts are polygons, the shadow is the mark
+    // scaled about the source, the bloom is a blur of the same geometry, the
+    // grain is fractal noise, and the colours come from a scanner that reads
+    // the source character by character (Highlight.nl). The .svg is the whole
+    // asset - no bitmap, no font subset, no external anything.
+    public static void conceptLumen(string path) throws IOException {
+        auto o = system.io.File.open(path, system.io.FileMode.ReadWriteTruncate);
+        Wallpaper.head(o, "NL - the checker's light");
+
+        // The source is far off the sheet, up and to the left, and the mark
+        // stands in its beam. Two things follow from putting it *far* away.
+        // A source sitting on the mark blocks every direction at once and the
+        // wall goes flat; a source just off the edge throws a shadow that grows
+        // faster than the sheet and swallows the panel whole. From 5200px out
+        // the rays are near enough to parallel that the shadow stays the size
+        // of the mark, and the counter of the n still reads as a channel when
+        // it lands on the code, 2000px downstream.
+        int sx = -5200;
+        int sy = -1600;
+        int mx = 400;
+        int my = 300;
+        int mk = 1100;
+
+        // The panel. Chamfered top-left and bottom-right - the mark's one cut,
+        // repeated at sheet scale.
+        int panL = 950;
+        int panR = 2470;
+        int panT = 232;
+        int panB = 1300;
+        int cham = 30;
+
+        // 20 lines at 30/50. IBM Plex Mono advances 0.6em, so a column is
+        // exactly 18px and the longest line lands at 1050 + 75*18 = 2400.
+        int codeX = 1050;
+        int line0 = 292;
+        int lineH = 50;
+        int focus = 6;
+        int focusY = line0 + focus * lineH;
+
+        string[] src = new string[]{
+            "namespace demo;",
+            "",
+            "class Port {",
+            "    private readonly string source;",
+            "",
+            "    // A missing port is a value, not a surprise.",
+            "    public int|null read() throws IOException {",
+            "        auto f = system.io.File.open(this.source, system.io.FileMode.Read);",
+            "        string|null raw = f.readLine();",
+            "        f.close();",
+            "        if (raw == null) { return null; }",
+            "        return system.Int.tryParse(raw.trim());",
+            "    }",
+            "",
+            "    public string status() throws IOException {",
+            "        int|null port = this.read();",
+            "        if (port == null) { return \"no port configured\"; }",
+            "        return \"listening on \" + port;",
+            "    }",
+            "}"
+        };
+
+        o.write("<defs>\n");
+        // the spill: where the beam enters the sheet, not where it comes from
+        o.write("<radialGradient id=\"spill\" gradientUnits=\"userSpaceOnUse\" cx=\"-120\" cy=\"-80\" r=\"1500\">");
+        Wallpaper.stop(o, "0", Wallpaper.jadeBright(), 34);
+        Wallpaper.stop(o, "0.5", Wallpaper.jade(), 10);
+        Wallpaper.stop(o, "1", Wallpaper.jade(), 0);
+        o.write("</radialGradient>\n");
+        // and the halo the mark itself throws back
+        o.write("<radialGradient id=\"halo\" gradientUnits=\"userSpaceOnUse\" cx=\"" + Wallpaper.i(mx) + "\" cy=\"" + Wallpaper.i(my) + "\" r=\"640\">");
+        Wallpaper.stop(o, "0", Wallpaper.jadeBright(), 22);
+        Wallpaper.stop(o, "0.45", Wallpaper.jade(), 7);
+        Wallpaper.stop(o, "1", Wallpaper.jade(), 0);
+        o.write("</radialGradient>\n");
+        // Every shaft shares one falloff so the beam keeps a single direction.
+        // It is measured across the sheet, not from the source: the source is
+        // 5200px off-canvas and a gradient anchored there would spend all of
+        // its range outside the picture.
+        o.write("<linearGradient id=\"ray\" gradientUnits=\"userSpaceOnUse\" x1=\"-200\" y1=\"0\" x2=\"2560\" y2=\"0\">");
+        Wallpaper.stop(o, "0", Wallpaper.jadeBright(), 72);
+        Wallpaper.stop(o, "0.42", Wallpaper.jade(), 28);
+        Wallpaper.stop(o, "1", Wallpaper.jade(), 3);
+        o.write("</linearGradient>\n");
+        // the light landing on the panel's leading edge
+        o.write("<linearGradient id=\"edge\" gradientUnits=\"userSpaceOnUse\" x1=\"0\" y1=\"" + Wallpaper.i(panT) + "\" x2=\"0\" y2=\"" + Wallpaper.i(panB) + "\">");
+        Wallpaper.stop(o, "0", Wallpaper.jade(), 0);
+        Wallpaper.stop(o, "0.34", Wallpaper.jadeBright(), 85);
+        Wallpaper.stop(o, "0.62", Wallpaper.jade(), 12);
+        Wallpaper.stop(o, "1", Wallpaper.jade(), 0);
+        o.write("</linearGradient>\n");
+        // the bar under the line the beam is aimed at
+        o.write("<linearGradient id=\"row\" gradientUnits=\"userSpaceOnUse\" x1=\"" + Wallpaper.i(panL) + "\" y1=\"0\" x2=\"" + Wallpaper.i(panR) + "\" y2=\"0\">");
+        Wallpaper.stop(o, "0", Wallpaper.jadeBright(), 34);
+        Wallpaper.stop(o, "0.55", Wallpaper.jade(), 10);
+        Wallpaper.stop(o, "1", Wallpaper.jade(), 0);
+        o.write("</linearGradient>\n");
+        // light comes from the left, so the far end of every line sits deeper
+        o.write("<linearGradient id=\"falloff\" gradientUnits=\"userSpaceOnUse\" x1=\"" + Wallpaper.i(codeX) + "\" y1=\"0\" x2=\"2420\" y2=\"0\">");
+        o.write("<stop offset=\"0\" stop-color=\"#ffffff\" stop-opacity=\"1\"/>");
+        o.write("<stop offset=\"1\" stop-color=\"#ffffff\" stop-opacity=\"0.72\"/>");
+        o.write("</linearGradient>\n");
+        o.write("<mask id=\"lit\" maskUnits=\"userSpaceOnUse\" x=\"" + Wallpaper.i(panL) + "\" y=\"" + Wallpaper.i(panT) + "\" width=\"" + Wallpaper.i(panR - panL) + "\" height=\"" + Wallpaper.i(panB - panT) + "\">");
+        o.write("<rect x=\"" + Wallpaper.i(panL) + "\" y=\"" + Wallpaper.i(panT) + "\" width=\"" + Wallpaper.i(panR - panL) + "\" height=\"" + Wallpaper.i(panB - panT) + "\" fill=\"url(#falloff)\"/></mask>\n");
+        o.write("<clipPath id=\"panel\"><path d=\"M" + Wallpaper.i(panL + cham) + " " + Wallpaper.i(panT) + "L" + Wallpaper.i(panR) + " " + Wallpaper.i(panT) + "L" + Wallpaper.i(panR) + " " + Wallpaper.i(panB - cham) + "L" + Wallpaper.i(panR - cham) + " " + Wallpaper.i(panB) + "L" + Wallpaper.i(panL) + " " + Wallpaper.i(panB) + "L" + Wallpaper.i(panL) + " " + Wallpaper.i(panT + cham) + "Z\"/></clipPath>\n");
+        // bloom: blur the geometry, then lift the alpha back up so the halo
+        // reads as light and not as a smudge
+        o.write("<filter id=\"bloom\" x=\"-60%\" y=\"-60%\" width=\"220%\" height=\"220%\"><feGaussianBlur stdDeviation=\"19\" result=\"b\"/><feComponentTransfer in=\"b\"><feFuncA type=\"linear\" slope=\"1.35\"/></feComponentTransfer></filter>\n");
+        o.write("<filter id=\"penumbra\" x=\"-20%\" y=\"-20%\" width=\"140%\" height=\"140%\"><feGaussianBlur stdDeviation=\"17\"/></filter>\n");
+        o.write("<filter id=\"bloomSoft\" x=\"-60%\" y=\"-60%\" width=\"220%\" height=\"220%\"><feGaussianBlur stdDeviation=\"9\"/></filter>\n");
+        // fractal noise, tinted jade and kept under 10% - the only thing on the
+        // sheet that is not aligned to the grid
+        o.write("<filter id=\"grain\" x=\"0%\" y=\"0%\" width=\"100%\" height=\"100%\"><feTurbulence type=\"fractalNoise\" baseFrequency=\"0.85\" numOctaves=\"2\" seed=\"31\" result=\"n\"/><feColorMatrix in=\"n\" type=\"matrix\" values=\"0 0 0 0 0.72  0 0 0 0 0.94  0 0 0 0 0.85  0 0 0 0.55 0\"/></filter>\n");
+        o.write("<radialGradient id=\"vignette\" gradientUnits=\"userSpaceOnUse\" cx=\"1180\" cy=\"660\" r=\"1620\">");
+        Wallpaper.stop(o, "0.42", "#000000", 0);
+        Wallpaper.stop(o, "1", "#000000", 62);
+        o.write("</radialGradient>\n");
+        Wallpaper.gobo(o, sx, sy, mx, my, mk);
+        o.write("</defs>\n");
+
+        o.write("<rect width=\"2560\" height=\"1440\" fill=\"url(#spill)\"/>\n");
+        o.write("<rect width=\"2560\" height=\"1440\" fill=\"url(#halo)\"/>\n");
+        Wallpaper.fan(o, new Rng(20260801), sx, sy, mx, my, 100);
+
+        // the panel: translucent, so the fan keeps going underneath it
+        o.write("<g clip-path=\"url(#panel)\">\n");
+        o.write("<rect x=\"" + Wallpaper.i(panL) + "\" y=\"" + Wallpaper.i(panT) + "\" width=\"" + Wallpaper.i(panR - panL) + "\" height=\"" + Wallpaper.i(panB - panT) + "\" fill=\"#0c1512\" fill-opacity=\"0.70\"/>\n");
+        Wallpaper.fan(o, new Rng(20260801), sx, sy, mx, my, 80);
+        o.write("<rect x=\"" + Wallpaper.i(panL) + "\" y=\"" + Wallpaper.i(focusY - 36) + "\" width=\"" + Wallpaper.i(panR - panL) + "\" height=\"50\" fill=\"url(#row)\"/>\n");
+        o.write("</g>\n");
+
+        o.write("<path d=\"M" + Wallpaper.i(panL + cham) + " " + Wallpaper.i(panT) + "L" + Wallpaper.i(panR) + " " + Wallpaper.i(panT) + "L" + Wallpaper.i(panR) + " " + Wallpaper.i(panB - cham) + "L" + Wallpaper.i(panR - cham) + " " + Wallpaper.i(panB) + "L" + Wallpaper.i(panL) + " " + Wallpaper.i(panB) + "L" + Wallpaper.i(panL) + " " + Wallpaper.i(panT + cham) + "Z\" fill=\"none\" stroke=\"" + Wallpaper.jade() + "\" stroke-opacity=\"0.16\" stroke-width=\"2\"/>\n");
+        o.write("<path d=\"M" + Wallpaper.i(panL) + " " + Wallpaper.i(panT + cham) + "L" + Wallpaper.i(panL) + " " + Wallpaper.i(panB) + "\" stroke=\"url(#edge)\" stroke-width=\"3\"/>\n");
+
+        // line numbers, in the gutter, dim enough to stay out of the way
+        o.write("<g font-family=\"" + Wallpaper.mono() + "\" font-size=\"19\" fill=\"" + Wallpaper.faint() + "\" text-anchor=\"end\">\n");
+        for (int n = 0; n < src.length(); n++) {
+            int num = n + 1;
+            string pad = Wallpaper.i(num);
+            if (num < 10) { pad = "0" + pad; }
+            int a = 30;
+            if (n == focus) { a = 70; }
+            o.write("<text x=\"1010\" y=\"" + Wallpaper.i(line0 + n * lineH) + "\" fill-opacity=\"" + Wallpaper.op(a) + "\">" + pad + "</text>\n");
+        }
+        o.write("</g>\n");
+
+        // the source. Its brightness is a function of the distance to the beam,
+        // and the floor is 46: a line you cannot read is a line that hides.
+        o.write("<g font-family=\"" + Wallpaper.mono() + "\" font-size=\"30\" mask=\"url(#lit)\">\n");
+        for (int n = 0; n < src.length(); n++) {
+            int y = line0 + n * lineH;
+            int lum = Wallpaper.clamp(104 - Wallpaper.abs(y - focusY) / 14, 46, 100);
+            Wallpaper.codeLine(o, codeX, y, lum, src[n]);
+        }
+        o.write("</g>\n");
+        // the caret, parked after the closing brace
+        o.write("<rect x=\"" + Wallpaper.i(codeX + 18) + "\" y=\"" + Wallpaper.i(line0 + 19 * lineH - 24) + "\" width=\"13\" height=\"30\" fill=\"" + Wallpaper.jade() + "\" fill-opacity=\"0.5\"/>\n");
+
+        // the mark, standing in the beam
+        o.write("<g filter=\"url(#bloom)\">\n");
+        Wallpaper.openMarks(o);
+        Wallpaper.mark(o, mx, my, mk, Wallpaper.jadeBright(), 90, true);
+        o.write("</g></g>\n");
+        Wallpaper.openMarks(o);
+        Wallpaper.mark(o, mx, my, mk, Wallpaper.jadeBright(), 100, true);
+        o.write("</g>\n");
+
+        // the callout, aimed at line 07 - the one flag on the sheet, and the
+        // only place amber is louder than a token
+        Wallpaper.line(o, 894, focusY - 8, 944, focusY - 8, Wallpaper.amber(), 40, 1);
+        Wallpaper.label(o, 880, focusY - 30, Wallpaper.mono(), 21, 500, Wallpaper.amber(), 88, 2, "end", "int|null &#183; the signature says so,");
+        Wallpaper.label(o, 880, focusY + 2, Wallpaper.mono(), 21, 400, Wallpaper.amber(), 62, 1, "end", "so the caller cannot skip it.");
+
+        Wallpaper.label(o, 82, 762, Wallpaper.mono(), 20, 500, Wallpaper.jade(), 90, 8, "start", "04 &#183; THE LANGUAGE");
+        o.write("<g filter=\"url(#bloomSoft)\" opacity=\"0.35\">\n");
+        Wallpaper.label(o, 80, 842, Wallpaper.sans(), 58, 600, Wallpaper.text(), 100, 0, "start", "You cannot forget");
+        Wallpaper.label(o, 80, 908, Wallpaper.sans(), 58, 600, Wallpaper.text(), 100, 0, "start", "what the type");
+        Wallpaper.label(o, 80, 974, Wallpaper.sans(), 58, 600, Wallpaper.jade(), 100, 0, "start", "already told you.");
+        o.write("</g>\n");
+        Wallpaper.label(o, 80, 842, Wallpaper.sans(), 58, 600, Wallpaper.text(), 96, 0, "start", "You cannot forget");
+        Wallpaper.label(o, 80, 908, Wallpaper.sans(), 58, 600, Wallpaper.text(), 96, 0, "start", "what the type");
+        Wallpaper.label(o, 80, 974, Wallpaper.sans(), 58, 600, Wallpaper.jade(), 96, 0, "start", "already told you.");
+        Wallpaper.label(o, 82, 1046, Wallpaper.sans(), 25, 400, Wallpaper.muted(), 88, 0, "start", "Unions make null explicit. Checked exceptions");
+        Wallpaper.label(o, 82, 1080, Wallpaper.sans(), 25, 400, Wallpaper.muted(), 88, 0, "start", "and exhaustive matches do the rest.");
+
+        Wallpaper.label(o, panL, 1362, Wallpaper.mono(), 19, 400, Wallpaper.faint(), 85, 4, "start", "DEMO/PORT.NL &#183; 20 LINES &#183; COMPILES CLEAN &#183; RUNS AS-IS");
+        Wallpaper.wordmark(o, panR, 1364, 42, 70);
+
+        // the same sheet margin as concept B, marked at the two corners the
+        // panel leaves free - it is the same drawing office, after all
+        Wallpaper.line(o, 80, 80, 140, 80, Wallpaper.border(), 70, 2);
+        Wallpaper.line(o, 80, 80, 80, 140, Wallpaper.border(), 70, 2);
+        Wallpaper.line(o, 80, 1360, 140, 1360, Wallpaper.border(), 70, 2);
+        Wallpaper.line(o, 80, 1360, 80, 1300, Wallpaper.border(), 70, 2);
+
+        o.write("<rect width=\"2560\" height=\"1440\" fill=\"url(#vignette)\"/>\n");
+        o.write("<rect width=\"2560\" height=\"1440\" filter=\"url(#grain)\" opacity=\"0.09\"/>\n");
+
+        Wallpaper.tail(o);
+        o.close();
+        system.Out.println("wrote " + path);
+    }
+
     public static int run() throws IOException {
         if (!system.io.Directory.exists("brand/generated")) {
             system.io.Directory.create("brand/generated");
@@ -387,6 +681,7 @@ class Wallpaper {
         Wallpaper.conceptField("brand/generated/wallpaper-a-field.svg");
         Wallpaper.conceptBlueprint("brand/generated/wallpaper-b-sheet.svg");
         Wallpaper.conceptEcho("brand/generated/wallpaper-c-echo.svg");
+        Wallpaper.conceptLumen("brand/generated/wallpaper-d-lumen.svg");
         return 0;
     }
 
