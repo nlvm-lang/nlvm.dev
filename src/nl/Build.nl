@@ -49,8 +49,8 @@ class Build {
             system.io.File.readAllText("brand/nl_logo.svg"));
         system.io.File.writeAllText("docs/assets/brand/nl_logo_letters.svg",
             system.io.File.readAllText("brand/nl_logo_letters.svg"));
-        system.io.File.writeAllText("docs/assets/brand/social-preview.svg",
-            system.io.File.readAllText("brand/social-preview.svg"));
+        // Only the PNG ships: og:image points at it, and an SVG served to a
+        // browser without IBM Plex would fall back to a system font.
         Build.copyBinaryFile("brand/social-preview.png", "docs/assets/brand/social-preview.png");
 
         string[] brandPngs = system.io.File.glob("brand/generated", ".*\\.png");
@@ -237,8 +237,11 @@ class Build {
 
             string nav = Build.renderNav(page, items);
             string devlogHref = page.inDevlog ? "index.html" : "devlog/index.html";
+            string sitePath = page.outPath.replace("docs/", "");
+            string canonical = "https://nlvm.dev/" + sitePath;
 
             string pageOut = layout;
+            pageOut = pageOut.replace("{{CANONICAL}}", canonical);
             pageOut = pageOut.replace("{{TITLE}}", page.title);
             pageOut = pageOut.replace("{{DESCRIPTION}}", page.description);
             pageOut = pageOut.replace("{{ROOT}}", page.root);

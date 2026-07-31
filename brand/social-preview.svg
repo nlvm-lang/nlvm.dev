@@ -1,37 +1,30 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 640" width="1280" height="640">
-  <defs>
-    <radialGradient id="glow" cx="0.5" cy="0.5" r="0.55">
-      <stop offset="0" stop-color="#3ecfae" stop-opacity="0.09"/>
-      <stop offset="1" stop-color="#3ecfae" stop-opacity="0"/>
-    </radialGradient>
-    <radialGradient id="tint" cx="0.5" cy="0.38" r="0.72">
-      <stop offset="0" stop-color="#3ecfae" stop-opacity="0.16"/>
-      <stop offset="1" stop-color="#3ecfae" stop-opacity="0"/>
-    </radialGradient>
-  </defs>
+  <!-- Source of truth for the social preview. Render with `make social`.
+       Palette, type and logo follow private/NL Brand Guidelines: flat
+       background, no glow, square stroke caps, jade as the only accent. -->
 
-  <rect width="1280" height="640" fill="#0c1110"/>
-  <rect width="1280" height="640" fill="url(#glow)"/>
+  <rect width="1280" height="640" fill="#0a0f0c"/>
 
-  <g transform="translate(230 232) scale(0.5078)">
-    <rect width="512" height="512" rx="115" fill="#0c1110"/>
-    <rect width="512" height="512" rx="115" fill="url(#tint)"/>
-    <rect x="9" y="9" width="494" height="494" rx="107" fill="none" stroke="#2e423b" stroke-width="10"/>
-    <g fill="none" stroke="#3ecfae" stroke-width="46" stroke-linecap="round">
-      <path d="M163 364 V174"/>
-      <path d="M163 232 A58 58 0 0 1 279 232 V364"/>
-      <path d="M349 364 V128"/>
+  <!-- Mark — nl_logo.svg scaled 0.5, unmodified geometry -->
+  <g transform="translate(214 192) scale(0.5)">
+    <rect width="512" height="512" rx="40" fill="#0a0f0c"/>
+    <rect x="6" y="6" width="500" height="500" rx="36" fill="none" stroke="#263832" stroke-width="6"/>
+    <g fill="none" stroke="#35C99B" stroke-width="44" stroke-linecap="square" stroke-linejoin="miter">
+      <path d="M160 364 V224 L196 190 L244 190 L280 224 V364"/>
+      <path d="M360 364 V128"/>
     </g>
   </g>
 
-  <g font-family="JetBrains Mono">
-    <text x="562" y="250" font-size="18" font-weight="500" letter-spacing="4" fill="#3ecfae">THE NL PROGRAMMING LANGUAGE</text>
-    <text x="556" y="374" font-size="104" font-weight="700">
-      <tspan fill="#dbe4e0">nl</tspan><tspan fill="#5f7370">vm</tspan><tspan fill="#3ecfae">_</tspan>
-    </text>
-  </g>
-  <g font-family="JetBrains Mono" font-size="32" font-weight="700" fill="#dbe4e0">
-    <text x="562" y="446">A small language that takes</text>
-    <text x="562" y="490" xml:space="preserve"><tspan fill="#3ecfae">correctness</tspan><tspan fill="#90a49d"> seriously.</tspan></text>
+  <text x="534" y="202"
+        font-family="'IBM Plex Mono', ui-monospace, 'JetBrains Mono', Menlo, Consolas, monospace"
+        font-size="18" font-weight="500" letter-spacing="3.24" fill="#35C99B">THE NL PROGRAMMING LANGUAGE</text>
+
+  <text x="534" y="322"
+        font-family="'IBM Plex Mono', ui-monospace, 'JetBrains Mono', Menlo, Consolas, monospace"
+        font-size="104" font-weight="700"><tspan fill="#E7EEEA">nl</tspan><tspan fill="#5F7370">vm</tspan><tspan fill="#35C99B">_</tspan></text>
+
+  <g font-family="'IBM Plex Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif">
+    <text x="534" y="402" font-size="34" font-weight="600" fill="#E7EEEA">The compiler is on your side.</text>
+    <text x="534" y="448" font-size="22" font-weight="400" fill="#93A69E">Null safety, checked exceptions, exhaustive matching.</text>
   </g>
 </svg>

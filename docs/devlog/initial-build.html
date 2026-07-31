@@ -6,12 +6,26 @@
 <title>From spec to running VM: the initial build &mdash; nlvm devlog</title>
 <meta name="description" content="How the NL toolchain was built: a Rust workspace, a vertical-slice strategy, and a YAML conformance suite driving development from the first commit.">
 <link rel="stylesheet" href="../assets/style.css">
+<link rel="canonical" href="https://nlvm.dev/devlog/initial-build.html">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="nlvm">
+<meta property="og:url" content="https://nlvm.dev/devlog/initial-build.html">
+<meta property="og:title" content="From spec to running VM: the initial build &mdash; nlvm devlog">
+<meta property="og:description" content="How the NL toolchain was built: a Rust workspace, a vertical-slice strategy, and a YAML conformance suite driving development from the first commit.">
 <meta property="og:image" content="https://nlvm.dev/assets/brand/social-preview.png">
+<meta property="og:image:width" content="1280">
+<meta property="og:image:height" content="640">
+<meta property="og:image:alt" content="nlvm &mdash; the NL programming language. The compiler is on your side.">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="From spec to running VM: the initial build &mdash; nlvm devlog">
+<meta name="twitter:description" content="How the NL toolchain was built: a Rust workspace, a vertical-slice strategy, and a YAML conformance suite driving development from the first commit.">
+<meta name="twitter:image" content="https://nlvm.dev/assets/brand/social-preview.png">
+
 <link rel="icon" type="image/svg+xml" href="../assets/brand/nl_logo.svg">
 
-<link rel="preconnect" href="https://fonts.googleapis.com"></link>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"></link>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
@@ -49,7 +63,7 @@
   <p>The load-bearing choice is <code>nl-bytecode</code>: one crate owns the module format, the opcodes and the type descriptors, and both the compiler and the VM depend on it. There is no way for the two halves to disagree about what the bytecode means.</p>
 
   <h2>Tests as the steering wheel</h2>
-  <p>The specification ships its own conformance tests — YAML files with NL sources, an expected stdout and an expected exit code. The test runner was built in phase 1, before most of the language existed, so from the first week every feature landed the same way: pick the spec tests it should unlock, write local tests for the corners, make them green, move on. The local suite now counts 212 files, one per feature.</p>
+  <p>The specification ships its own conformance tests — YAML files with NL sources, an expected stdout and an expected exit code. The test runner was built in phase 1, before most of the language existed, so from the first week every feature landed the same way: pick the spec tests it should unlock, write local tests for the corners, make them green, move on. The local suite now counts 231 files, one per feature.</p>
 
   <h2>Phase by phase</h2>
   <ul>

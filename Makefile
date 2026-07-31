@@ -4,7 +4,7 @@
 all: raster compile build
 
 raster:
-	$(MAKE) -C brand raster_logo
+	$(MAKE) -C brand all
 
 compile:
 	nlc src/nl -o Build.nlp

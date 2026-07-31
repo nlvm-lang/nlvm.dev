@@ -1,6 +1,18 @@
 
 
-.PHONY: raster_logo
+.PHONY: all raster_logo social
+
+all: raster_logo social
+
+# social-preview.png is generated — never edit it by hand, edit the SVG.
+# Needs IBM Plex Mono + IBM Plex Sans installed system-wide (ibm-plex-mono.zip
+# and ibm-plex-sans.zip from github.com/IBM/plex/releases, ttf/ into
+# ~/.local/share/fonts/ + fc-cache -f). Without them rsvg-convert falls back
+# to a system font silently and the typography breaks.
+social:
+	@fc-list | grep -q "IBM Plex Mono" || { echo "error: IBM Plex Mono not installed"; exit 1; }
+	@fc-list | grep -q "IBM Plex Sans" || { echo "error: IBM Plex Sans not installed"; exit 1; }
+	rsvg-convert -w 1280 -h 640 social-preview.svg -o social-preview.png
 
 raster_logo:
 	rsvg-convert -w 16 -h 16 nl_logo.svg -o generated/nl_logo_16.png
