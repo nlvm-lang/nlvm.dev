@@ -95,16 +95,16 @@ Hello, world!</code></pre>
 
   <h3>Check your setup</h3>
   <pre class="sh"><code>$ nlc --version
-nlc 0.22.0 (nlvm-specs 0.8.48)
+nlc 0.22.1 (nlvm-specs 0.8.48)
 $ nlvm --version
-nlvm 0.22.0 (nlvm-specs 0.8.48)</code></pre>
+nlvm 0.22.1 (nlvm-specs 0.8.48)</code></pre>
   <p>Both report the crate version and the release of the <a href="https://github.com/nlvm-lang/nlvm-specs">language specification</a> this build implements.</p>
 
   <h3>Run the test suite</h3>
   <p>The repository ships a YAML conformance suite — one file per language feature — which is what CI runs:</p>
   <pre class="sh"><code>$ cargo test --workspace
 $ cargo run -p nl-test-runner -- tests
-231 passed, 0 failed, 231 total</code></pre>
+232 passed, 0 failed, 232 total</code></pre>
   <p>Each test is a plain YAML file: NL source files, expected stdout, expected exit code. They double as executable documentation — <a href="https://github.com/nlvm-lang/nlvm/tree/main/tests">browse them</a> to see every feature in action.</p>
 
 </main>

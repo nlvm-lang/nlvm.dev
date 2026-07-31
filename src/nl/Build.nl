@@ -1,6 +1,10 @@
 namespace site;
 
 class Build {
+    private static string siteUrl() {
+        return "https://nlvm.dev/";
+    }
+
     private static string htmlEscape(string s) {
         string r = s.replace("&", "&amp;");
         r = r.replace("<", "&lt;");
@@ -237,8 +241,7 @@ class Build {
 
             string nav = Build.renderNav(page, items);
             string devlogHref = page.inDevlog ? "index.html" : "devlog/index.html";
-            string sitePath = page.outPath.replace("docs/", "");
-            string canonical = "https://nlvm.dev/" + sitePath;
+            string canonical = Build.siteUrl() + page.outPath.replace("docs/", "");
 
             string pageOut = layout;
             pageOut = pageOut.replace("{{CANONICAL}}", canonical);
