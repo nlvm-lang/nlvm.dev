@@ -6,5 +6,6 @@
 .venv/
 
 /Build.nlp
+/brand/Wallpaper.nlp
 brand/generated/
 brand/private/
