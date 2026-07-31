@@ -15,16 +15,24 @@
     </g>
   </g>
 
-  <text x="534" y="202"
-        font-family="'IBM Plex Mono', ui-monospace, 'JetBrains Mono', Menlo, Consolas, monospace"
-        font-size="18" font-weight="500" letter-spacing="3.24" fill="#35C99B">THE NL PROGRAMMING LANGUAGE</text>
+  <!-- Type block. Origin sits on the top-left corner of the mark's visible
+       border, so every y below reads as a distance from the top of the box:
+         12.875  eyebrow cap height   -> its cap line is flush with the box top
+        253      box height           -> the last baseline sits on the box bottom
+       The two middle baselines follow from the ink gaps 38 / 55.375 / 28.
+       Box top = 192 + (6 - 3) * 0.5 = 193.5, box height = 506 * 0.5 = 253. -->
+  <g transform="translate(534 193.5)">
+    <text x="0" y="12.875"
+          font-family="'IBM Plex Mono', ui-monospace, 'JetBrains Mono', Menlo, Consolas, monospace"
+          font-size="18" font-weight="500" letter-spacing="3.24" fill="#35C99B">THE NL PROGRAMMING LANGUAGE</text>
 
-  <text x="534" y="322"
-        font-family="'IBM Plex Mono', ui-monospace, 'JetBrains Mono', Menlo, Consolas, monospace"
-        font-size="104" font-weight="700"><tspan fill="#E7EEEA">nl</tspan><tspan fill="#5F7370">vm</tspan><tspan fill="#35C99B">_</tspan></text>
+    <text x="0" y="127.875"
+          font-family="'IBM Plex Mono', ui-monospace, 'JetBrains Mono', Menlo, Consolas, monospace"
+          font-size="104" font-weight="700"><tspan fill="#E7EEEA">nl</tspan><tspan fill="#5F7370">vm</tspan><tspan fill="#35C99B">_</tspan></text>
 
-  <g font-family="'IBM Plex Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif">
-    <text x="534" y="402" font-size="34" font-weight="600" fill="#E7EEEA">The compiler is on your side.</text>
-    <text x="534" y="448" font-size="22" font-weight="400" fill="#93A69E">Null safety, checked exceptions, exhaustive matching.</text>
+    <g font-family="'IBM Plex Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif">
+      <text x="0" y="208.625" font-size="34" font-weight="600" fill="#E7EEEA">The compiler is on your side.</text>
+      <text x="0" y="253" font-size="22" font-weight="400" fill="#93A69E">Null safety, checked exceptions, exhaustive matching.</text>
+    </g>
   </g>
 </svg>

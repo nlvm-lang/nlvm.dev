@@ -303,7 +303,7 @@ handler.openFile("data.txt"); // Warning W001 — return value is discarded</cod
   <div class="example reveal">
     <h3><span class="num">14</span>A real program: the release script</h3>
     <p class="desc">This is not a toy — it's <a href="https://github.com/nlvm-lang/nlvm/blob/main/tools/Release.nl"><code>tools/Release.nl</code></a>, the script that actually tags and pushes every nlvm release. Files, regular expressions and subprocesses from the standard library, checked IO errors, null-checked regex results.</p>
-    <pre class="nl"><code>namespace tools;
+    <pre class="nl"><code>namespace nlvm.tools;
 
 class Release 
 {
