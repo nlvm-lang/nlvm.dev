@@ -51,6 +51,11 @@ body {
 
 ::selection { background: var(--primary-glow); }
 
+/* Long URLs and runs of inline <code> tokens have no natural break point and
+   would push narrow layouts wider than the viewport. */
+p, li, h1, h2, h3, h4, dd, dt { overflow-wrap: break-word; }
+:not(pre) > code { overflow-wrap: anywhere; }
+
 a { color: var(--primary); text-decoration: none; }
 a:hover { color: var(--primary-bright); }
 
@@ -147,6 +152,10 @@ a:hover { color: var(--primary-bright); }
   position: relative;
 }
 
+/* grid items default to min-width:auto, so a long unwrappable line (the
+   install command) would stretch the column past the viewport */
+.hero-grid > * { min-width: 0; }
+
 .hero-brand {
   display: flex;
   align-items: center;
@@ -210,11 +219,21 @@ a:hover { color: var(--primary-bright); }
 @media (max-width: 920px) {
   .hero { padding: 56px 0 56px; text-align: center; }
   .hero::before { left: 50%; transform: translateX(-50%); }
-  .hero-grid { grid-template-columns: 1fr; gap: 44px; }
+  .hero-grid { grid-template-columns: minmax(0, 1fr); gap: 44px; }
   .hero-brand { justify-content: center; }
   .hero .tagline { margin-left: auto; margin-right: auto; }
   .hero .cta-row { justify-content: center; }
   .quick-install { margin-left: auto; margin-right: auto; }
+}
+
+@media (max-width: 560px) {
+  .hero { padding: 44px 0 48px; }
+  .hero-glyph { width: 38px; height: 38px; border-radius: 9px; }
+  .hero-eyebrow { font-size: 12px; letter-spacing: 0.1em; }
+  .hero .tagline { font-size: 1rem; }
+  .hero .cta-row { gap: 10px; }
+  /* wrap the install line instead of hiding it behind a scrollbar */
+  .quick-install pre { white-space: pre-wrap; word-break: break-word; text-align: left; }
 }
 
 .btn {
